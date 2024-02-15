@@ -1,0 +1,39 @@
+name: Streamlit with Selenium
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set permissions for chromedriver
+      run: |
+        bash set_permissions.sh
+
+    - name: Cache Chromedriver
+      uses: actions/cache@v2
+      with:
+        path: chromedriver
+        key: chromedriver-${{ runner.os }}
+        restore-keys: |
+          chromedriver-
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.x
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run Streamlit app
+      run: |
+        streamlit run app.py
