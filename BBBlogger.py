@@ -19,12 +19,16 @@ def run_selenium_script(customer_name):
         # Set the path to the ChromeDriver executable in the root folder
         chromedriver_path = os.path.join(current_dir, "chromedriver")
         
-        # Set up Chrome WebDriver with options
-        options = webdriver.ChromeOptions()
-        options.add_argument("--headless")  # Optional, for headless operation
-        
-        # Initialize Chrome WebDriver using the specified ChromeDriver executable path
-        driver = webdriver.Chrome(executable_path=chromedriver_path, options=options)
+        # Check if the ChromeDriver executable exists at the specified path
+        if os.path.exists(chromedriver_path):
+            # Set up Chrome WebDriver with options
+            options = webdriver.ChromeOptions()
+            options.add_argument("--headless")  # Optional, for headless operation
+            
+            # Initialize Chrome WebDriver using the specified ChromeDriver executable path
+            driver = webdriver.Chrome(executable_path=chromedriver_path, options=options)
+        else:
+            raise FileNotFoundError("ChromeDriver executable not found at the specified path.")
         
         driver.get("https://www.bbb.org/kitchener/login")
         
@@ -44,11 +48,13 @@ def run_selenium_script(customer_name):
         return f"Element not found error: {str(e)}"
     except TimeoutException as e:
         return f"Timeout error: {str(e)}"
+    except FileNotFoundError as e:
+        return f"ChromeDriver executable not found: {str(e)}"
     except Exception as e:
         return f"An unexpected error occurred: {str(e)}"
     finally:
         # Quit the WebDriver session to release resources
-        if driver is not None:
+        if "driver" in locals():
             driver.quit()
 
 # Streamlit UI setup
