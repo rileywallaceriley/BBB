@@ -5,21 +5,6 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from webdriver_manager.chrome import ChromeDriverManager
-
-def initialize_driver():
-    try:
-        # Set up Chrome WebDriver with options
-        options = webdriver.ChromeOptions()
-        options.add_argument("--headless")  # Optional, for headless operation
-        
-        # Initialize Chrome WebDriver using ChromeDriverManager
-        service = Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=service, options=options)
-        return driver
-    except Exception as e:
-        st.error(f"Error initializing WebDriver: {str(e)}")
-        return None
 
 def run_selenium_script(customer_name):
     # Temporarily hardcoded for testing purposes
@@ -27,12 +12,18 @@ def run_selenium_script(customer_name):
     # Retrieve the password securely from Streamlit secrets
     password = "Fuckoffboo123@!@!"
     
-    # Initialize the WebDriver
-    driver = initialize_driver()
-    if driver is None:
-        return
+    # Path to the ChromeDriver binary in the project directory
+    chromedriver_path = "./chromedriver"
     
     try:
+        # Set up Chrome WebDriver with options
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")  # Optional, for headless operation
+        
+        # Initialize Chrome WebDriver using the manually downloaded ChromeDriver binary
+        service = Service(executable_path=chromedriver_path)
+        driver = webdriver.Chrome(service=service, options=options)
+        
         driver.get("https://www.bbb.org/kitchener/login")
         
         # Use explicit waits instead of fixed sleeps
