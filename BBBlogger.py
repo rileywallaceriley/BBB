@@ -43,7 +43,7 @@ def run_selenium_script(customer_name):
         return f"An unexpected error occurred: {str(e)}"
     finally:
         # Quit the WebDriver session to release resources
-        if 'driver' in locals():
+        if driver is not None:
             driver.quit()
 
 # Streamlit UI setup
