@@ -7,14 +7,16 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 
 def run_selenium_script(customer_name):
-    username = st.secrets["bbb_credentials"]["username"]
+    # Temporarily hardcoded for testing purposes
+    username = "rwallace@lendcare.ca"
+    # Retrieve the password securely from Streamlit secrets
     password = st.secrets["bbb_credentials"]["password"]
     
+    # Assuming the setup for Selenium WebDriver is done here
     chromedriver_path = "./chromedriver"
     service = Service(executable_path=chromedriver_path)
     options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
-    
+    options.add_argument("--headless")  # Optional, for headless operation
     driver = webdriver.Chrome(service=service, options=options)
     
     try:
