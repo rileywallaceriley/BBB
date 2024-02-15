@@ -15,6 +15,7 @@ def run_selenium_script(customer_name):
     # Path to the ChromeDriver binary in the project directory
     chromedriver_path = "./chromedriver"
     
+    print("Initializing Chrome WebDriver...")
     try:
         # Set up Chrome WebDriver with options
         options = webdriver.ChromeOptions()
@@ -23,6 +24,11 @@ def run_selenium_script(customer_name):
         # Initialize Chrome WebDriver using the manually downloaded ChromeDriver binary
         service = Service(executable_path=chromedriver_path)
         driver = webdriver.Chrome(service=service, options=options)
+        
+        if driver is not None:
+            print("Chrome WebDriver successfully initialized.")
+        else:
+            print("Failed to initialize Chrome WebDriver.")
         
         driver.get("https://www.bbb.org/kitchener/login")
         
