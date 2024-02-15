@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
+from webdriver_manager.chrome import ChromeDriverManager
 
 def run_selenium_script(customer_name):
     # Temporarily hardcoded for testing purposes
@@ -12,14 +13,14 @@ def run_selenium_script(customer_name):
     # Retrieve the password securely from Streamlit secrets
     password = "Fuckoffboo123@!@!"
     
-    # Assuming the setup for Selenium WebDriver is done here
-    chromedriver_path = "./chromedriver"
-    service = Service(executable_path=chromedriver_path)
+    # Set up Chrome WebDriver with options
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")  # Optional, for headless operation
-    driver = webdriver.Chrome(service=service, options=options)
     
     try:
+        # Initialize Chrome WebDriver using ChromeDriverManager
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+        
         driver.get("https://www.bbb.org/kitchener/login")
         
         # Use explicit waits instead of fixed sleeps
@@ -41,7 +42,9 @@ def run_selenium_script(customer_name):
     except Exception as e:
         return f"An unexpected error occurred: {str(e)}"
     finally:
-        driver.quit()
+        # Quit the WebDriver session to release resources
+        if 'driver' in locals():
+            driver.quit()
 
 # Streamlit UI setup
 st.title('Automated Web Interaction with Selenium')
