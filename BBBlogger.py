@@ -2,6 +2,8 @@ import os
 import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
@@ -22,11 +24,12 @@ def run_selenium_script(customer_name):
         # Check if the ChromeDriver executable exists at the specified path
         if os.path.exists(chromedriver_path):
             # Set up Chrome WebDriver with options
-            options = webdriver.ChromeOptions()
+            options = Options()
             options.add_argument("--headless")  # Optional, for headless operation
             
             # Initialize Chrome WebDriver using the specified ChromeDriver executable path
-            driver = webdriver.Chrome(executable_path=chromedriver_path, options=options)
+            service = Service(chromedriver_path)
+            driver = webdriver.Chrome(service=service, options=options)
         else:
             raise FileNotFoundError("ChromeDriver executable not found at the specified path.")
         
