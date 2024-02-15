@@ -1,10 +1,10 @@
+import os
 import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-from webdriver_manager.chrome import ChromeDriverManager
 
 def run_selenium_script(customer_name):
     # Temporarily hardcoded for testing purposes
@@ -13,8 +13,18 @@ def run_selenium_script(customer_name):
     password = "Fuckoffboo123@!@!"
     
     try:
-        # Initialize Chrome WebDriver using ChromeDriverManager
-        driver = webdriver.Chrome(ChromeDriverManager().install())
+        # Get the current directory path
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        # Set the path to the ChromeDriver executable in the root folder
+        chromedriver_path = os.path.join(current_dir, "chromedriver")
+        
+        # Set up Chrome WebDriver with options
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")  # Optional, for headless operation
+        
+        # Initialize Chrome WebDriver using the specified ChromeDriver executable path
+        driver = webdriver.Chrome(executable_path=chromedriver_path, options=options)
         
         driver.get("https://www.bbb.org/kitchener/login")
         
