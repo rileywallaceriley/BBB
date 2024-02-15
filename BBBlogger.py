@@ -10,7 +10,7 @@ def run_selenium_script(customer_name):
     # Temporarily hardcoded for testing purposes
     username = "rwallace@lendcare.ca"
     # Retrieve the password securely from Streamlit secrets
-    password = st.secrets["bbb_credentials"]["password"]
+    password = "Fuckoffboo123@!@!"
     
     # Assuming the setup for Selenium WebDriver is done here
     chromedriver_path = "./chromedriver"
