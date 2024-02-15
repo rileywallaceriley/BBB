@@ -1,12 +1,8 @@
-import streamlit as st
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-import time
+from webdriver_manager.chrome import ChromeDriverManager
 
 def run_selenium_script(customer_name, username, password):
-    # Setup WebDriver (Assuming ChromeDriver)
-    driver = webdriver.Chrome('./chromedriver')  # Update the path to your ChromeDriver
+    driver = webdriver.Chrome(ChromeDriverManager().install())
 
     try:
         # Open login page
