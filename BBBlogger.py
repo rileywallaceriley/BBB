@@ -13,11 +13,11 @@ def run_selenium_script(customer_name):
     # Retrieve the password securely from Streamlit secrets
     password = "Fuckoffboo123@!@!"
     
-    # Set up Chrome WebDriver with options
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless")  # Optional, for headless operation
-    
     try:
+        # Set up Chrome WebDriver with options
+        options = webdriver.ChromeOptions()
+        options.add_argument("--headless")  # Optional, for headless operation
+        
         # Initialize Chrome WebDriver using ChromeDriverManager
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         
