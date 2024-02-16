@@ -16,8 +16,8 @@ def run_selenium_script(customer_name):
         driver = webdriver.Chrome(options=options)
 
         # Hardcoded login details for testing
-        username = "your_username_here"
-        password = "your_password_here"
+        username = "rwallace@lendcare.ca"
+        password = "Fuckoffboo123@!@!"
 
         driver.get("https://www.bbb.org/kitchener/login")
 
