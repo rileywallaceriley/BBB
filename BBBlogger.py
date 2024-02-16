@@ -14,24 +14,12 @@ def run_selenium_script(customer_name):
     # Retrieve the password securely from Streamlit secrets
     password = "Fuckoffboo123@!@!"
     
-    try:
-        # Get the current directory path
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        # Set the path to the ChromeDriver executable in the root folder
-        chromedriver_path = os.path.join(current_dir, "chromedriver")
-        
-        # Check if the ChromeDriver executable exists at the specified path
-        if os.path.exists(chromedriver_path):
-            # Set up Chrome WebDriver with options
-            options = Options()
-            options.add_argument("--headless")  # Optional, for headless operation
-            
-            # Initialize Chrome WebDriver using the specified ChromeDriver executable path
-            service = Service(chromedriver_path)
-            driver = webdriver.Chrome(service=service, options=options)
-        else:
-            raise FileNotFoundError("ChromeDriver executable not found at the specified path.")
+from webdriver_manager.chrome import ChromeDriverManager
+
+# Instead of specifying the chromedriver path directly
+service = Service(ChromeDriverManager().install())
+driver = webdriver.Chrome(service=service, options=options)
+
         
         driver.get("https://www.bbb.org/kitchener/login")
         
