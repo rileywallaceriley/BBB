@@ -1,4 +1,4 @@
-import os
+import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -10,21 +10,14 @@ def run_selenium_script(customer_name):
     try:
         # Set up Chrome WebDriver with options
         options = Options()
-        options.add_argument("--headless")  # For headless operation
-        options.add_argument("--disable-gpu")  # Optional, for some headless environments
-        options.add_argument("--no-sandbox")  # Bypass OS security model, required for Docker
-        options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
-
-        # Initialize Chrome WebDriver without using WebDriver Manager
+        options.add_argument("--headless")  # Optional, for headless operation
+        
+        # Initialize Chrome WebDriver
         driver = webdriver.Chrome(options=options)
 
-        # Retrieve username and password securely from environment variables
-        username = os.getenv('USERNAME')
-        password = os.getenv('PASSWORD')
-
-        # Ensure credentials are not None
-        if username is None or password is None:
-            raise ValueError("Username or password environment variable is not set.")
+        # Hardcoded login details for testing
+        username = "your_username_here"
+        password = "your_password_here"
 
         driver.get("https://www.bbb.org/kitchener/login")
 
@@ -50,8 +43,14 @@ def run_selenium_script(customer_name):
         if 'driver' in locals():
             driver.quit()
 
-# This section is optional for running as a standalone script
-if __name__ == "__main__":
-    # Example usage with a dummy customer name
-    result = run_selenium_script("Example Customer")
-    print(result)
+# Streamlit UI setup
+st.title('Automated Web Interaction with Selenium')
+
+customer_name = st.text_input("Enter Customer Name", "")
+
+if st.button("Run Automation"):
+    if customer_name:
+        result = run_selenium_script(customer_name)
+        st.success(result)
+    else:
+        st.error("Please enter a customer name.")
