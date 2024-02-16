@@ -7,29 +7,31 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
-
-def run_selenium_script(customer_name):
-    # Temporarily hardcoded for testing purposes
-    username = "rwallace@lendcare.ca"
-    # Retrieve the password securely from Streamlit secrets
-    password = "Fuckoffboo123@!@!"
-    
 from webdriver_manager.chrome import ChromeDriverManager
 
-# Instead of specifying the chromedriver path directly
-service = Service(ChromeDriverManager().install())
-driver = webdriver.Chrome(service=service, options=options)
+def run_selenium_script(customer_name):
+    try:
+        # Set up Chrome WebDriver with options
+        options = Options()
+        options.add_argument("--headless")  # Optional, for headless operation
 
-        
+        # Initialize Chrome WebDriver using WebDriver Manager
+        service = Service(ChromeDriverManager().install())
+        driver = webdriver.Chrome(service=service, options=options)
+
+        # Temporarily hardcoded for testing purposes
+        username = "rwallace@lendcare.ca"
+        # Retrieve the password securely from Streamlit secrets
+        password = "Fuckoffboo123@!@!"  # Suggest using Streamlit secrets for this
+
         driver.get("https://www.bbb.org/kitchener/login")
-        
+
         # Use explicit waits instead of fixed sleeps
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "email"))).send_keys(username)
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "password"))).send_keys(password)
         WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Log In')]"))).click()
 
         # Navigate and perform actions
-        # Example of navigating with explicit wait for URL change
         WebDriverWait(driver, 10).until(EC.url_contains("dashboard"))
 
         # Placeholder for further actions...
@@ -45,7 +47,7 @@ driver = webdriver.Chrome(service=service, options=options)
         return f"An unexpected error occurred: {str(e)}"
     finally:
         # Quit the WebDriver session to release resources
-        if "driver" in locals():
+        if 'driver' in locals():
             driver.quit()
 
 # Streamlit UI setup
