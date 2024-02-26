@@ -6,14 +6,11 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 def scrape_bbb_complaint_details(complaint_code):
-   options = Options()
-options.add_argument("--headless")
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
-# Set a user agent string to mimic a real browser
-options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36")
-
-driver = webdriver.Chrome(options=options)
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Run Chrome in headless mode
+    chrome_options.add_argument("--no-sandbox")  # Bypass OS security model
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
+    driver = webdriver.Chrome(options=chrome_options)
 
     try:
         # Navigate to the BBB Response Portal login page
