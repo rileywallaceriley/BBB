@@ -4,7 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-def scrape_bbb_complaint_details(complaint_code):
+def scrape_bbb_complaint_details():
     chrome_options = Options()
     chrome_options.add_argument("--headless")  # Run Chrome in headless mode
     chrome_options.add_argument("--no-sandbox")  # Bypass OS security model
@@ -19,6 +19,9 @@ def scrape_bbb_complaint_details(complaint_code):
     WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.ID, "cd"))
     )
+
+    # Get complaint code from the user
+    complaint_code = input("Enter complaint code: ")
 
     # Enter the complaint code into the form
     code_input = driver.find_element(By.ID, "cd")
@@ -45,6 +48,5 @@ def scrape_bbb_complaint_details(complaint_code):
     # Close the browser
     driver.quit()
 
-# Example usage
-complaint_code = input("Enter complaint code: ")  # Get the complaint code from the user
-scrape_bbb_complaint_details(complaint_code)
+# Call the function to start the scraping process
+scrape_bbb_complaint_details()
