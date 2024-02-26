@@ -4,53 +4,57 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import NoSuchElementException, TimeoutException
-
-def run_selenium_script(customer_name):
-    try:
-        # Set up Chrome WebDriver with options
-        options = Options()
-        options.add_argument("--headless")  # Optional, for headless operation
-        
-        # Initialize Chrome WebDriver
-        driver = webdriver.Chrome(options=options)
-
-        # Hardcoded login details for testing
-        username = "rwallace@lendcare.ca"
-        password = "Fuckoffboo123@!@!"
-
-        driver.get("https://www.bbb.org/kitchener/login")
-
-        # Use explicit waits instead of fixed sleeps
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "email"))).send_keys(username)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "password"))).send_keys(password)
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.XPATH, "//button[contains(text(),'Log In')]"))).click()
-
-        # Navigate and perform actions
-        WebDriverWait(driver, 10).until(EC.url_contains("dashboard"))
-
-        # Placeholder for further actions...
-
-        return "Success - Actions completed"
-    except NoSuchElementException as e:
-        return f"Element not found error: {str(e)}"
-    except TimeoutException as e:
-        return f"Timeout error: {str(e)}"
-    except Exception as e:
-        return f"An unexpected error occurred: {str(e)}"
-    finally:
-        # Quit the WebDriver session to release resources
-        if 'driver' in locals():
-            driver.quit()
+import pandas as pd
 
 # Streamlit UI setup
-st.title('Automated Web Interaction with Selenium')
+st.title('BBB Complaint Details Scraper')
 
-customer_name = st.text_input("Enter Customer Name", "")
+code = st.text_input("Enter Code", "")
 
-if st.button("Run Automation"):
-    if customer_name:
-        result = run_selenium_script(customer_name)
-        st.success(result)
+if st.button("Scrape Details"):
+    if code:
+        # Function to run the Selenium script
+        def scrape_complaint_details(code):
+            try:
+                options = Options()
+                options.add_argument("--headless")  # For headless operation
+                driver = webdriver.Chrome(options=options)
+
+                driver.get("https://respond.bbb.org/respond/")
+
+                # Assume 'input_code' is the name of the input field for the code, adjust as necessary
+                WebDriverWait(driver, 10).until(
+                    EC.presence_of_element_located((By.NAME, "input_code"))
+                ).send_keys(code)
+
+                # Assume this is the way to submit the code, adjust selector as needed
+                submit_button = driver.find_element(By.XPATH, "//button[@type='submit']")
+                submit_button.click()
+
+                # Wait for the pop-up or new page to load
+                # This condition might need to be adjusted based on the actual page behavior
+                WebDriverWait(driver, 10).until(EC.url_contains("complaints"))
+
+                # Scrape customer details and the complaint
+                # Adjust the selectors based on the actual content structure
+                customer_details = driver.find_element(By.ID, "customer_details").text
+                complaint = driver.find_element(By.ID, "complaint_text").text
+
+                return {"customer_details": customer_details, "complaint": complaint}
+            except Exception as e:
+                return f"An error occurred: {str(e)}"
+            finally:
+                if 'driver' in locals():
+                    driver.quit()
+
+        # Running the scraping function
+        result = scrape_complaint_details(code)
+
+        if isinstance(result, dict):
+            st.success("Scraping successful!")
+            st.write("Customer Details:", result["customer_details"])
+            st.write("Complaint:", result["complaint"])
+        else:
+            st.error(result)
     else:
-        st.error("Please enter a customer name.")
+        st.error("Please enter a code.")
