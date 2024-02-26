@@ -1,12 +1,12 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
 
-# Function to simulate logging in and scraping complaint details
 def scrape_bbb_complaint_details(complaint_code):
-    # Initialize the WebDriver
-    driver = webdriver.Chrome()  # Specify the path to chromedriver if not in PATH
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")  # Run Chrome in headless mode
+    chrome_options.add_argument("--no-sandbox")  # Bypass OS security model
+    chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
+    driver = webdriver.Chrome(options=chrome_options)
 
     # Navigate to the BBB Response Portal login page
     login_page_url = "https://respond.bbb.org/respond/"
