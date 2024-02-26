@@ -17,10 +17,10 @@ def scrape_bbb_complaint_details(complaint_code):
         login_page_url = "https://respond.bbb.org/respond/"
         driver.get(login_page_url)
 
-        # Wait for the code input field to be loaded
-        WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.ID, "cd"))
-        )
+      WebDriverWait(driver, 30).until(
+    EC.presence_of_element_located((By.XPATH, "//div[@class='card-header card-header-large' and contains(text(), 'Complaint Information')]"))
+)
+
 
         # Input the complaint code
         code_input = driver.find_element(By.ID, "cd")
