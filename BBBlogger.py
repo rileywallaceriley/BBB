@@ -20,7 +20,7 @@ def scrape_bbb_complaint_details(complaint_code):
 
     # Wait for the code input field to be loaded
     print("Waiting for the code input field to be loaded...")
-    WebDriverWait(driver, 60).until(
+    WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.ID, "cd"))
     )
     print("Code input field is loaded.")
@@ -45,17 +45,38 @@ def scrape_bbb_complaint_details(complaint_code):
 
     # Scrape the required details from the complaint details page
     print("Scraping consumer information and complaint details...")
-    consumer_information = driver.find_element(By.CSS_SELECTOR, "div.consumer-information").text
-    complaint_details = driver.find_element(By.CSS_SELECTOR, "div.complaint-details").text
 
-    print("Consumer Information:", consumer_information)
-    print("Complaint Details:", complaint_details)
+    # Consumer Information
+    consumer_name_element = driver.find_element(By.CSS_SELECTOR, "div.card-body div.form-group:nth-of-type(1) div:nth-of-type(2)")
+    consumer_name = consumer_name_element.text.strip()
+    print("Consumer Name:", consumer_name)
+
+    consumer_address_element = driver.find_element(By.CSS_SELECTOR, "div.card-body div.form-group:nth-of-type(2) div:nth-of-type(2)")
+    consumer_address = consumer_address_element.text.strip()
+    print("Consumer Address:", consumer_address)
+
+    consumer_daytime_phone_element = driver.find_element(By.CSS_SELECTOR, "div.card-body div.row:nth-of-type(1) div.col-md-6:nth-of-type(1) div:nth-of-type(2)")
+    consumer_daytime_phone = consumer_daytime_phone_element.text.strip()
+    print("Consumer Daytime Phone:", consumer_daytime_phone)
+
+    consumer_evening_phone_element = driver.find_element(By.CSS_SELECTOR, "div.card-body div.row:nth-of-type(1) div.col-md-6:nth-of-type(1) div:nth-of-type(4)")
+    consumer_evening_phone = consumer_evening_phone_element.text.strip()
+    print("Consumer Evening Phone:", consumer_evening_phone)
+
+    # Complaint Details
+    complaint_text_element = driver.find_element(By.CSS_SELECTOR, "div#cmpld div.card-body div.mb-3")
+    complaint_text = complaint_text_element.text.strip()
+    print("Complaint Text:", complaint_text)
+
+    desired_outcome_element = driver.find_element(By.CSS_SELECTOR, "div#cmpld div.card-body div.alert div:nth-of-type(2)")
+    desired_outcome = desired_outcome_element.text.strip()
+    print("Desired Outcome:", desired_outcome)
+
+    print("Scraping process completed.")
 
     # Close the browser
     print("Closing the browser...")
     driver.quit()
-
-    print("Scraping process completed.")
 
 # Streamlit UI
 st.title("BBB Complaint Details Scraper")
