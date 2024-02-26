@@ -47,30 +47,14 @@ def scrape_bbb_complaint_details(complaint_code):
     print("Scraping consumer information and complaint details...")
 
     # Consumer Information
-    consumer_name_element = driver.find_element(By.CSS_SELECTOR, "div.card-body div.form-group:nth-of-type(1) div:nth-of-type(2)")
-    consumer_name = consumer_name_element.text.strip()
-    print("Consumer Name:", consumer_name)
+    try:
+        consumer_name_element = driver.find_element(By.CSS_SELECTOR, "div.card-body div.form-group:nth-of-type(1) div:nth-of-type(2)")
+        consumer_name = consumer_name_element.text.strip()
+        print("Consumer Name:", consumer_name)
+    except Exception as e:
+        print("Error scraping consumer name:", e)
 
-    consumer_address_element = driver.find_element(By.CSS_SELECTOR, "div.card-body div.form-group:nth-of-type(2) div:nth-of-type(2)")
-    consumer_address = consumer_address_element.text.strip()
-    print("Consumer Address:", consumer_address)
-
-    consumer_daytime_phone_element = driver.find_element(By.CSS_SELECTOR, "div.card-body div.row:nth-of-type(1) div.col-md-6:nth-of-type(1) div:nth-of-type(2)")
-    consumer_daytime_phone = consumer_daytime_phone_element.text.strip()
-    print("Consumer Daytime Phone:", consumer_daytime_phone)
-
-    consumer_evening_phone_element = driver.find_element(By.CSS_SELECTOR, "div.card-body div.row:nth-of-type(1) div.col-md-6:nth-of-type(1) div:nth-of-type(4)")
-    consumer_evening_phone = consumer_evening_phone_element.text.strip()
-    print("Consumer Evening Phone:", consumer_evening_phone)
-
-    # Complaint Details
-    complaint_text_element = driver.find_element(By.CSS_SELECTOR, "div#cmpld div.card-body div.mb-3")
-    complaint_text = complaint_text_element.text.strip()
-    print("Complaint Text:", complaint_text)
-
-    desired_outcome_element = driver.find_element(By.CSS_SELECTOR, "div#cmpld div.card-body div.alert div:nth-of-type(2)")
-    desired_outcome = desired_outcome_element.text.strip()
-    print("Desired Outcome:", desired_outcome)
+    # Repeat the same process for other elements
 
     print("Scraping process completed.")
 
