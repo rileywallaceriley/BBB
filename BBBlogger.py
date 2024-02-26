@@ -1,41 +1,46 @@
-import time
+import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
-def scrape_bbb_complaint_details(complaint_code):
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    driver = webdriver.Chrome(options=chrome_options)
+def setup_driver():
+    # Initialize the Chrome WebDriver
+    driver = webdriver.Chrome()
+    driver.get("https://respond.bbb.org/respond/")
+    driver.set_window_size(1711, 850)  # Set the window size if necessary
+    return driver
 
+def submit_code(driver, code):
+    # Locate the input field by its ID, click on it, and enter the code
+    code_input = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "cd")))
+    code_input.click()
+    code_input.send_keys(code)
+
+    # Locate and click the submit button
+    submit_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "btn")))
+    submit_button.click()
+
+    # Optional: Handling a modal dialog by closing it if it appears
     try:
-        driver.get("https://respond.bbb.org/respond/")
-        print("Current URL:", driver.current_url)  # Debugging: Check you're on the correct page
-        
-        # Wait for the element to be present before proceeding
-        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "cd")))
+        close_modal = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".rwCloseButton")))
+        close_modal.click()
+    except:
+        print("Modal dialog not present or could not be closed.")
 
-        # If the element is inside an iframe, uncomment the next line and specify the correct iframe id or name
-        # driver.switch_to.frame("iframe_id_or_name")
-        
-        code_input = driver.find_element(By.ID, "cd")
-        code_input.clear()
-        code_input.send_keys(complaint_code)
-        
-        submit_button = driver.find_element(By.ID, "btn")
-        submit_button.click()
-        
-        # Wait for the next page to load or for a specific element on the next page to ensure it has loaded
-        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "someElementOnNextPage")))
-        
-        # Scrape the data you need here
-        
-    except Exception as e:
-        print("An error occurred:", e)
-    finally:
-        driver.quit()
+def main():
+    st.title('BBB Complaint Details Submission')
+    
+    # User input for the code
+    code = st.text_input('Enter your complaint code:', '')
+    submit = st.button('Submit')
+    
+    if submit and code:
+        driver = setup_driver()
+        submit_code(driver, code)
+        st.success('Submitted successfully')
+        # Optionally, close the driver after submission or retain it open for further operations
+        # driver.quit()
 
-# Replace 'your_complaint_code_here' with the actual complaint code
-scrape_bbb_complaint_details('your_complaint_code_here')
+if __name__ == "__main__":
+    main()
