@@ -30,8 +30,7 @@ def scrape_bbb_complaint_details(complaint_code):
     submit_button.click()
 
     # Wait for the complaint details page to load
-    # This is an example, adjust the waiting condition based on your page's behavior
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, "div.card-body"))
     )
 
@@ -47,5 +46,5 @@ def scrape_bbb_complaint_details(complaint_code):
     driver.quit()
 
 # Example usage
-complaint_code = "your_complaint_code_here"  # Replace this with the actual code
+complaint_code = input("Enter complaint code: ")  # Get the complaint code from the user
 scrape_bbb_complaint_details(complaint_code)
