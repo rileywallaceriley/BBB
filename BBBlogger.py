@@ -1,8 +1,8 @@
 import streamlit as st
+from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 def scrape_bbb_complaint_details(complaint_code):
@@ -17,10 +17,10 @@ def scrape_bbb_complaint_details(complaint_code):
         login_page_url = "https://respond.bbb.org/respond/"
         driver.get(login_page_url)
 
-      WebDriverWait(driver, 30).until(
-    EC.presence_of_element_located((By.XPATH, "//div[@class='card-header card-header-large' and contains(text(), 'Complaint Information')]"))
-)
-
+        # Wait for the code input field to be loaded
+        WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.ID, "cd"))
+        )
 
         # Input the complaint code
         code_input = driver.find_element(By.ID, "cd")
@@ -31,18 +31,18 @@ def scrape_bbb_complaint_details(complaint_code):
         submit_button = driver.find_element(By.ID, "btn")
         submit_button.click()
 
-        # Wait for the complaint details page to load
+        # Wait for the complaint details page to load by checking for the presence of "cmplid" element
         WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "div.card-body"))
+            EC.presence_of_element_located((By.ID, "cmplid"))
         )
 
         # Scrape the required details from the complaint details page
-        consumer_information = driver.find_element(By.CSS_SELECTOR, "div.consumer-information").text
-        complaint_details = driver.find_element(By.CSS_SELECTOR, "div.complaint-details").text
+        consumer_information = driver.find_element(By.CSS_SELECTOR, "div.card-body").text  # Example, adjust as needed
+        # You can add more scraping logic here as needed
 
         # Print the scraped details
         st.write("Consumer Information:", consumer_information)
-        st.write("Complaint Details:", complaint_details)
+        # Add more output as needed
         
     finally:
         # Close the browser session
