@@ -1,46 +1,41 @@
-import streamlit as st
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 def scrape_bbb_complaint_details(complaint_code):
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Run Chrome in headless mode
-    chrome_options.add_argument("--no-sandbox")  # Bypass OS security model
-    chrome_options.add_argument("--disable-dev-shm-usage")  # Overcome limited resource problems
+    chrome_options.add_argument("--headless")
     driver = webdriver.Chrome(options=chrome_options)
 
     try:
-        # Navigate to the BBB Response Portal login page
-        login_page_url = "https://respond.bbb.org/respond/"
-        driver.get(login_page_url)
+        driver.get("https://respond.bbb.org/respond/")
+        print("Current URL:", driver.current_url)  # Debugging: Check you're on the correct page
+        
+        # Wait for the element to be present before proceeding
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "cd")))
 
-        # Fixed delay to wait for the page to load
-        time.sleep(30)
-
-        # Input the complaint code
+        # If the element is inside an iframe, uncomment the next line and specify the correct iframe id or name
+        # driver.switch_to.frame("iframe_id_or_name")
+        
         code_input = driver.find_element(By.ID, "cd")
         code_input.clear()
         code_input.send_keys(complaint_code)
-
-        # Submit the form
+        
         submit_button = driver.find_element(By.ID, "btn")
         submit_button.click()
-
-        # Fixed delay to wait for the complaint details page to load
-        time.sleep(30)
-
-        # Scrape the required details from the complaint details page
-        # Example: Just printing the current URL as a placeholder
-        # Replace the following line with your actual scraping logic
-        print(driver.current_url)
         
+        # Wait for the next page to load or for a specific element on the next page to ensure it has loaded
+        WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "someElementOnNextPage")))
+        
+        # Scrape the data you need here
+        
+    except Exception as e:
+        print("An error occurred:", e)
     finally:
-        # Close the browser session
         driver.quit()
 
-# Streamlit UI
-st.title("BBB Complaint Details Scraper")
-complaint_code = st.text_input("Enter complaint code:")
-if st.button("Scrape Details"):
-    scrape_bbb_complaint_details(complaint_code)
+# Replace 'your_complaint_code_here' with the actual complaint code
+scrape_bbb_complaint_details('your_complaint_code_here')
