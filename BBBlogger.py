@@ -13,36 +13,41 @@ def scrape_bbb_complaint_details(complaint_code):
 
     # Navigate to the BBB Response Portal login page
     login_page_url = "https://respond.bbb.org/respond/"
+    print("Navigating to the login page:", login_page_url)
     driver.get(login_page_url)
 
     # Wait for the complaint code input field to be loaded
+    print("Waiting for the complaint code input field to be loaded...")
     WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.ID, "cd"))
     )
+    print("Complaint code input field is loaded.")
 
     # Enter the complaint code into the form
+    print("Entering complaint code:", complaint_code)
     code_input = driver.find_element(By.ID, "cd")
     code_input.clear()
     code_input.send_keys(complaint_code)
 
     # Submit the form
+    print("Submitting the form...")
     submit_button = driver.find_element(By.ID, "btn")
     submit_button.click()
 
     # Wait for the complaint details page to load
+    print("Waiting for the complaint details page to load...")
     WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, "div.card-body"))
     )
-
-    # Print a message to indicate that the complaint details page has loaded
     print("Complaint details page has loaded.")
 
     # Scrape the required details from the complaint details page
-    # Replace these lines with code to scrape consumer information and complaint details
+    # Add your scraping code here
 
     # Close the browser
+    print("Closing the browser...")
     driver.quit()
 
 # Example usage
-complaint_code = "632033975146E"
+complaint_code = "your_complaint_code_here"
 scrape_bbb_complaint_details(complaint_code)
