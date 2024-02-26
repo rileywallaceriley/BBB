@@ -1,46 +1,53 @@
 import streamlit as st
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
+import time
 
+# Function to setup the Chrome WebDriver
 def setup_driver():
-    # Initialize the Chrome WebDriver
+    # Add the path to the ChromeDriver if it's not in the default PATH
+    # Example: driver = webdriver.Chrome(executable_path='/path/to/chromedriver')
     driver = webdriver.Chrome()
-    driver.get("https://respond.bbb.org/respond/")
-    driver.set_window_size(1711, 850)  # Set the window size if necessary
     return driver
 
-def submit_code(driver, code):
-    # Locate the input field by its ID, click on it, and enter the code
-    code_input = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "cd")))
-    code_input.click()
-    code_input.send_keys(code)
-
-    # Locate and click the submit button
-    submit_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "btn")))
-    submit_button.click()
-
-    # Optional: Handling a modal dialog by closing it if it appears
+# Function to navigate and scrape data
+def scrape_bbb_complaint_details(complaint_id):
+    driver = setup_driver()
     try:
-        close_modal = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".rwCloseButton")))
-        close_modal.click()
-    except:
-        print("Modal dialog not present or could not be closed.")
+        # Navigating to the page
+        driver.get("https://respond.bbb.org/respond/")
+        driver.set_window_size(1024, 768) # Adjust size as needed
 
+        # Interacting with the page
+        time.sleep(2)  # Adjust based on page load time
+        code_input = driver.find_element(By.ID, "cd")
+        code_input.click()
+        code_input.send_keys(complaint_id)
+        
+        submit_btn = driver.find_element(By.ID, "btn")
+        submit_btn.click()
+
+        # Add any additional interactions here
+
+        # Example: Copy content
+        # content = driver.find_element(By.YOUR_SELECTOR).text
+        # print(content)  # or return it
+
+    finally:
+        driver.quit()
+
+# Streamlit UI
 def main():
-    st.title('BBB Complaint Details Submission')
+    st.title('BBB Complaint Details Scraper')
+    complaint_id = st.text_input('Enter the Complaint ID:', '')
     
-    # User input for the code
-    code = st.text_input('Enter your complaint code:', '')
-    submit = st.button('Submit')
-    
-    if submit and code:
-        driver = setup_driver()
-        submit_code(driver, code)
-        st.success('Submitted successfully')
-        # Optionally, close the driver after submission or retain it open for further operations
-        # driver.quit()
+    if st.button('Scrape Details'):
+        if complaint_id:
+            scrape_bbb_complaint_details(complaint_id)
+            # Display the scraped data
+            # st.write(content)
+        else:
+            st.error('Please enter a valid Complaint ID.')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
