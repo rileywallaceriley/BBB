@@ -4,57 +4,60 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import pandas as pd
+from webdriver_manager.chrome import ChromeDriverManager
 
-# Streamlit UI setup
+def scrape_details(code):
+    # Initialize the Chrome driver with webdriver-manager
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+    
+    try:
+        # Navigate to the page and interact with it
+        driver.get("https://respond.bbb.org/respond/")
+        
+        # Wait for the input field and enter the code, adjust selector as needed
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.NAME, "input_code_name"))  # Adjust the selector
+        ).send_keys(code)
+        
+        # Submit the form, adjust the selector as needed
+        driver.find_element(By.XPATH, "//button[@type='submit']").click()
+        
+        # Wait for the navigation to complete, adjust the condition as needed
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//div[@id='customer_details']"))  # Adjust the selector
+        )
+        
+        # Scrape required details
+        customer_details = driver.find_element(By.ID, "customer_details").text  # Adjust the selector
+        complaint = driver.find_element(By.ID, "complaint_text").text  # Adjust the selector
+        
+        return {"customer_details": customer_details, "complaint": complaint}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        driver.quit()
+
+# Streamlit UI
 st.title('BBB Complaint Details Scraper')
 
 code = st.text_input("Enter Code", "")
 
 if st.button("Scrape Details"):
     if code:
-        # Function to run the Selenium script
-        def scrape_complaint_details(code):
-            try:
-                options = Options()
-                options.add_argument("--headless")  # For headless operation
-                driver = webdriver.Chrome(options=options)
-
-                driver.get("https://respond.bbb.org/respond/")
-
-                # Assume 'input_code' is the name of the input field for the code, adjust as necessary
-                WebDriverWait(driver, 10).until(
-                    EC.presence_of_element_located((By.NAME, "input_code"))
-                ).send_keys(code)
-
-                # Assume this is the way to submit the code, adjust selector as needed
-                submit_button = driver.find_element(By.XPATH, "//button[@type='submit']")
-                submit_button.click()
-
-                # Wait for the pop-up or new page to load
-                # This condition might need to be adjusted based on the actual page behavior
-                WebDriverWait(driver, 10).until(EC.url_contains("complaints"))
-
-                # Scrape customer details and the complaint
-                # Adjust the selectors based on the actual content structure
-                customer_details = driver.find_element(By.ID, "customer_details").text
-                complaint = driver.find_element(By.ID, "complaint_text").text
-
-                return {"customer_details": customer_details, "complaint": complaint}
-            except Exception as e:
-                return f"An error occurred: {str(e)}"
-            finally:
-                if 'driver' in locals():
-                    driver.quit()
-
-        # Running the scraping function
-        result = scrape_complaint_details(code)
-
-        if isinstance(result, dict):
-            st.success("Scraping successful!")
-            st.write("Customer Details:", result["customer_details"])
-            st.write("Complaint:", result["complaint"])
+        result = scrape_details(code)
+        
+        if "error" in result:
+            st.error("Failed to scrape details: " + result["error"])
         else:
-            st.error(result)
+            st.success("Scraping successful!")
+            st.subheader("Customer Details:")
+            st.write(result["customer_details"])
+            st.subheader("Complaint:")
+            st.write(result["complaint"])
     else:
         st.error("Please enter a code.")
