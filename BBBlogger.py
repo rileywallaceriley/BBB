@@ -20,7 +20,7 @@ def scrape_bbb_complaint_details(complaint_code):
 
     # Wait for the code input field to be loaded
     print("Waiting for the code input field to be loaded...")
-    WebDriverWait(driver, 30).until(
+    WebDriverWait(driver, 60).until(
         EC.presence_of_element_located((By.ID, "cd"))
     )
     print("Code input field is loaded.")
