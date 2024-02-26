@@ -19,7 +19,7 @@ def scrape_bbb_complaint_details(complaint_code):
 
         # Wait for the code input field to be loaded
         WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.TAG_NAME, "body"))
+            EC.presence_of_element_located((By.TAG_NAME, "div"))
         )
 
         # Input the complaint code
