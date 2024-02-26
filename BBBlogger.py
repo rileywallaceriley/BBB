@@ -1,9 +1,7 @@
 import streamlit as st
 from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+import time
 
 def scrape_bbb_complaint_details(complaint_code):
     chrome_options = Options()
@@ -17,10 +15,8 @@ def scrape_bbb_complaint_details(complaint_code):
         login_page_url = "https://respond.bbb.org/respond/"
         driver.get(login_page_url)
 
-        # Wait for the code input field to be loaded
-        WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.TAG_NAME, "div"))
-        )
+        # Fixed delay to wait for the page to load
+        time.sleep(30)
 
         # Input the complaint code
         code_input = driver.find_element(By.ID, "cd")
@@ -31,18 +27,13 @@ def scrape_bbb_complaint_details(complaint_code):
         submit_button = driver.find_element(By.ID, "btn")
         submit_button.click()
 
-        # Wait for the complaint details page to load by checking for the presence of "cmplid" element
-        WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.ID, "cmplid"))
-        )
+        # Fixed delay to wait for the complaint details page to load
+        time.sleep(30)
 
         # Scrape the required details from the complaint details page
-        consumer_information = driver.find_element(By.CSS_SELECTOR, "div.card-body").text  # Example, adjust as needed
-        # You can add more scraping logic here as needed
-
-        # Print the scraped details
-        st.write("Consumer Information:", consumer_information)
-        # Add more output as needed
+        # Example: Just printing the current URL as a placeholder
+        # Replace the following line with your actual scraping logic
+        print(driver.current_url)
         
     finally:
         # Close the browser session
