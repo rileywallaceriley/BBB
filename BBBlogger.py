@@ -1,10 +1,11 @@
+import streamlit as st
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
-def scrape_bbb_complaint_details():
+def scrape_bbb_complaint_details(complaint_code):
     chrome_options = Options()
     chrome_options.add_argument("--headless")  # Run Chrome in headless mode
     chrome_options.add_argument("--no-sandbox")  # Bypass OS security model
@@ -12,9 +13,6 @@ def scrape_bbb_complaint_details():
     driver = webdriver.Chrome(options=chrome_options)
 
     try:
-        # Prompt the user for the complaint code
-        complaint_code = input("Enter complaint code: ")
-
         # Navigate to the BBB Response Portal login page
         login_page_url = "https://respond.bbb.org/respond/"
         driver.get(login_page_url)
@@ -43,12 +41,15 @@ def scrape_bbb_complaint_details():
         complaint_details = driver.find_element(By.CSS_SELECTOR, "div.complaint-details").text
 
         # Print the scraped details
-        print("Consumer Information:", consumer_information)
-        print("Complaint Details:", complaint_details)
+        st.write("Consumer Information:", consumer_information)
+        st.write("Complaint Details:", complaint_details)
         
     finally:
         # Close the browser session
         driver.quit()
 
-# Run the scraping function
-scrape_bbb_complaint_details()
+# Streamlit UI
+st.title("BBB Complaint Details Scraper")
+complaint_code = st.text_input("Enter complaint code:")
+if st.button("Scrape Details"):
+    scrape_bbb_complaint_details(complaint_code)
