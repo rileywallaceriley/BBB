@@ -16,7 +16,7 @@ def scrape_bbb_complaint_details(complaint_code):
     driver.get(login_page_url)
 
     # Wait for the code input field to be loaded
-    WebDriverWait(driver, 10).until(
+    WebDriverWait(driver, 30).until(
         EC.presence_of_element_located((By.ID, "cd"))
     )
 
